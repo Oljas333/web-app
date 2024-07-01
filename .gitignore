@@ -1,6 +1,5 @@
 .idea/
-../venv/
-
+venv
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
 
 ### Django ###
@@ -9,7 +8,7 @@
 *.pyc
 __pycache__/
 local_settings.py
-db.sqlite3
+itproger/db.sqlite3
 media
 
 ### Linux ###
