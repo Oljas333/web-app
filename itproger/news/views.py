@@ -20,11 +20,17 @@ class NewsDetailView(DetailView):
     template_name = 'news/details_view.html'
     context_object_name = 'article'
 
-class NewsUpdateView(UpdateView):
-    model =  ArtiLes
-    template_name = 'news/create.html'
-    # fields = ['title', 'anons', 'full_text', 'date']
-    form_class = ArtiLesForm
+# class NewsUpdateView(UpdateView):
+#     model =  ArtiLes
+#     template_name = 'news/create.html'
+#     # fields = ['title', 'anons', 'full_text', 'date']
+#     form_class = ArtiLesForm
+#
+#
+#     def get_form(self, form_class=None):
+#         form = super().get_form(form_class)
+#         return form
+
 
 class NewsDeleteView(SuccessMessageMixin, DeleteView):
     model = ArtiLes
@@ -180,3 +186,45 @@ def news_by_category(request, category_id):
     categories = Category.objects.all()
     return render(request, 'news/news_list.html', {'categories': categories})
 
+def edit(request, article_id):
+    article = get_object_or_404(ArtiLes, id=article_id)
+
+    if request.method == 'POST':
+        article_form = ArtiLesForm(request.POST, instance=article)
+        category_form = CategoryForm(request.POST)
+
+        if category_form.is_valid():
+            new_category = category_form.save()
+            article.category = new_category
+        else:
+            new_category = None
+
+        if article_form.is_valid():
+            article = article_form.save(commit=False)
+
+            if not Category.objects.filter(id=article.category_id).exists():
+                return HttpResponse("Категория не существует.")
+
+            if new_category:
+                article.category = new_category
+
+            article.save()
+            return redirect(article.get_absolute_url())
+        else:
+            error = 'Форма статьи неверная'
+            data = {
+                'article_form': article_form,
+                'category_form': category_form,
+                'error': error,
+            }
+            return render(request, 'news/edit.html', data)
+    else:
+        article_form = ArtiLesForm(instance=article)
+        category_form = CategoryForm()
+
+    data = {
+        'article_form': article_form,
+        'category_form': category_form,
+        'article': article,
+    }
+    return render(request, 'news/edit.html', data)

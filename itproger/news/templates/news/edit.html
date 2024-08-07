@@ -1,0 +1,20 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Редактирование статьи{% endblock %}
+
+{% block content %}
+<div class="features">
+    <h1>Редактировать статью</h1>
+</div>
+<form method="post">
+    {% csrf_token %}
+    {{ article_form.as_p }}
+    {{ category_form.as_p }}
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+{% endblock %}
