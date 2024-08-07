@@ -1,0 +1,15 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Поиск{% endblock %}
+
+{% block content %}
+    <h1>Теги</h1>
+
+        <ul>
+            {% for category in categories %}
+                <li><a href="{% url 'news-by-category' category.id %}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+
+
+{% endblock %}

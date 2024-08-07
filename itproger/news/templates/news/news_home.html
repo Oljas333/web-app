@@ -4,21 +4,38 @@
 
 {% block content %}
     <div class="features">
+        <form action="{% url 'search' %}" class="navbar-form navbar-left" method="get">
+            <div class="input-group">
+                <input id="search" name="q" type="text" class="form-control" placeholder="Введите название статьи">
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">Поиск</button>
+                </span>
+            </div>
+        </form>
         <h1>Новости на сайте</h1>
         <p>На нашем сайте представлена простая информация</p>
+
+        <div class="categories">
+            <h4>Категории:</h4>
+            <ul>
+                {% for category in categories %}
+                    <li><a href="{% url 'news-by-category' category.id %}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+
         {% if news %}
             {% for el in news %}
                 <div class="alert alert-warning">
                     <h3>{{ el.title }}</h3>
                     <p>{{ el.anons }}</p>
+                    <p>#<a href="{% url 'news-by-category' el.category.id %}">{{ el.category.name }}</a></p>
                     <a href="{% url 'news-detail' el.id %}" class="btn btn-warning">Читать статью</a>
                 </div>
             {% endfor %}
         {% else %}
             <p>у вас нет записей!!</p>
         {% endif %}
-        {#Коментарии#}
-
-
+        {# Комментарии #}
     </div>
 {% endblock %}

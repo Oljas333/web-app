@@ -1,0 +1,18 @@
+{% extends 'main/layout.html' %}
+
+{% block title %}Поиск{% endblock %}
+
+{% block content %}
+    <h1>Результаты поиска</h1>
+    {% if products %}
+        <ul>
+            {% for product in products %}
+                <li>
+                    <a href="{{ product.get_absolute_url }}">{{ product.title }}</a> - {{ product.full_text|slice:":100" }}...
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Ничего не найдено</p>
+    {% endif %}
+{% endblock %}
