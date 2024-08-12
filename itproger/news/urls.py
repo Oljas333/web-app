@@ -6,11 +6,11 @@ urlpatterns = [
     path('', views.news_home, name='news_home'),
     path('create/', views.create, name='create'),
     path('<int:pk>/', views.NewsDetailView.as_view(), name='news-detail'),
-    # path('<int:pk>/update/', views.NewsUpdateView.as_view(), name='news-update'),
+    path('<int:pk>/update/', views.NewsUpdateView.as_view(), name='news-update'),
     path('<int:pk>/delete/', views.NewsDeleteView.as_view(), name='news-delete'),
     path('search/', views.search, name='search'),
     path('news/<int:id>/', views.article_detail, name='article_detail'),
     path('news/category/<int:category_id>/', views.news_by_category, name='news-by-category'),
     path('news/<int:article_id>/edit/', views.edit, name='edit'),
-
+    path('weather-and-currency/', views.weather_and_currency_view, name='weather_and_currency'),
 ]

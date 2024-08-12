@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-
+import requests
 def news_home(request):
     news = ArtiLes.objects.order_by('-date')
     return render(request, 'news/news_home.html', {'news': news})
@@ -20,16 +20,16 @@ class NewsDetailView(DetailView):
     template_name = 'news/details_view.html'
     context_object_name = 'article'
 
-# class NewsUpdateView(UpdateView):
-#     model =  ArtiLes
-#     template_name = 'news/create.html'
-#     # fields = ['title', 'anons', 'full_text', 'date']
-#     form_class = ArtiLesForm
-#
-#
-#     def get_form(self, form_class=None):
-#         form = super().get_form(form_class)
-#         return form
+class NewsUpdateView(UpdateView):
+    model =  ArtiLes
+    template_name = 'news/create.html'
+    # fields = ['title', 'anons', 'full_text', 'date']
+    form_class = ArtiLesForm
+
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        return form
 
 
 class NewsDeleteView(SuccessMessageMixin, DeleteView):
@@ -228,3 +228,37 @@ def edit(request, article_id):
         'article': article,
     }
     return render(request, 'news/edit.html', data)
+
+import logging
+
+logger = logging.getLogger(__name__)
+def weather_and_currency_view(request):
+    weather_api_key = 'e1b9079f105bdb7e3abaabfe82dcf8a8'
+    weather_city = 'Almaty'
+    weather_url = f'http://api.openweathermap.org/data/2.5/weather?q={weather_city}&appid={weather_api_key}&units=metric'
+
+    try:
+        response_weather = requests.get(weather_url)
+        response_weather.raise_for_status()
+        weather_data = response_weather.json()
+        logger.info(f"Weather API response: {weather_data}")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Weather API error: {e}")
+        weather_data = None
+
+    currency_url = 'https://api.exchangerate-api.com/v4/latest/USD'
+    try:
+        response_currency = requests.get(currency_url)
+        response_currency.raise_for_status()
+        currency_data = response_currency.json()
+        logger.info(f"Currency API response: {currency_data}")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Currency API error: {e}")
+        currency_data = None
+
+    context = {
+        'weather': weather_data,
+        'currency': currency_data,
+    }
+
+    return render(request, 'news/weather-and-currency.html', context)
